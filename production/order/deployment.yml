@@ -12,6 +12,8 @@ spec:
       labels:
         app: order
     spec:
+      ImagePullSecrets:
+        - name: ecr
       containers:
         - name: order
           image: uri_do_repositorio_no_ECR_AWS

@@ -1,9 +1,11 @@
 namespace: nsse
 namePrefix: "-prod"
+nameSuffix: "nsse-"
 commonLabels:
   application: not-so-simple-ecommerce
 resources:
   - namespace.yml
+  - image-pull-secret.yml
   - order/deployment.yml
 images:
   - name: uri_do_dkr.ecr...amazonaws.com/nsse/production/order
