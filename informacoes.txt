@@ -1,0 +1,10 @@
+Kustomize = ferramenta para gerenciamento do multiplos manifestos de forma simplificada,
+com ele, consegue-se referenciar outros manifestos, colocando coisas que outros manifestos
+devem ter em comum.
+Namespace = serve para isolamento de recursos dentro de um cluster kubernetes.
+A pasta production = ambiente.
+E possivel gerar arquivo yaml a partir da linha de comando do prompt:
+
+Criando namespace:
+kubectl create namespace nsse --dry-run=client -o yaml > namespace.yml
+

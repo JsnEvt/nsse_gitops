@@ -1,0 +1,22 @@
+namespace: nsse
+namePrefix: "-prod"
+commonLabels:
+  application: not-so-simple-ecommerce
+resources:
+  - namespace.yml
+  - order/deployment.yml
+images:
+  - name: uri_do_dkr.ecr...amazonaws.com/nsse/production/order
+  - newName: uri_do_dkr.ecr...amazonaws.com/nsse/production/order
+  - newTag: latest
+#Necessario abrir o tunel para executar o comando abaixo:
+
+#aws ssm start-session --target i-xxx --document-name AWS-StartPortForwardingSession --parameters 'portNumber=6443,localPortNumber=6443'
+#export KUBECONFIG=/etc/kubernetes/admin.conf
+#kubectl get nodes
+
+#O comando abaixo chamara o arquivo kustomization.yml
+#kubectl apply -k .
+
+#kubectl get deploy -n nsse
+#kubectl get deploy,po -n nsse
