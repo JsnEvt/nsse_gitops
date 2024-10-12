@@ -19,3 +19,6 @@ spec:
           image: uri_do_repositorio_no_ECR_AWS
           ports:
             - containerPort: 443
+          envFrom:
+            - configMapRef:
+                name: config-map
