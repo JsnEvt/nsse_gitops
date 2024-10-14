@@ -30,3 +30,10 @@ spec:
             - name: tls
               readOnly: true
               mountPath: /nsse-backend/certificates
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "64m"
+            limits:
+              memory: "64Mi"
+              cpu: "64m"
