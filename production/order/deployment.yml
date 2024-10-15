@@ -33,7 +33,25 @@ spec:
           resources:
             requests:
               memory: "64Mi"
-              cpu: "64m"
+              cpu: "50m"
             limits:
               memory: "64Mi"
-              cpu: "64m"
+              cpu: "50m"
+            livenessProbe:
+              httpGet:
+                path: /order/health
+                port: 4443
+                scheme: HTTPS
+              successThreshold: 1
+              failureThreshold: 3
+              initialDelaySeconds: 3
+              periodSeconds: 60
+            readinessProbe:
+              httpGet:
+                path: /order/health
+                port: 4443
+                scheme: HTTPS
+              successThreshold: 1
+              failureThreshold: 3
+              initialDelaySeconds: 3
+              periodSeconds: 3
