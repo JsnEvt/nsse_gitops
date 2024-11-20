@@ -44,7 +44,8 @@ spec:
                 scheme: HTTPS
               successThreshold: 1
               failureThreshold: 3
-              initialDelaySeconds: 3
+              initialDelaySeconds: 120
+              timeoutSeconds: 15
               periodSeconds: 60
             readinessProbe:
               httpGet:
@@ -54,4 +55,5 @@ spec:
               successThreshold: 1
               failureThreshold: 3
               initialDelaySeconds: 3
+              timeoutSeconds: 15
               periodSeconds: 3
