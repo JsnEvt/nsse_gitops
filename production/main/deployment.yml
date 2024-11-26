@@ -1,25 +1,28 @@
-apiVersion: apps/v1
+1apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: order
+  name: main
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: order
+      app: main
   template:
     metadata:
       labels:
-        app: order
+        app: main
     spec:
       volumes:
         - name: kestrel
           secret:
             secretName: kestrel-certificate
+        - name: mongo
+          secret:
+            secretName: mongo-certificate
       ImagePullSecrets:
-        - name: ecr-image-pull-credentials
+        - name: ecr
       containers:
-        - name: order
+        - name: main
           image: uri_do_repositorio_no_ECR_AWS
           ports:
             - containerPort: 4443
@@ -30,6 +33,9 @@ spec:
             - name: kestrel
               readOnly: true
               mountPath: /nsse-backend/certificates/kestrel
+            - name: mongo
+              readOnly: true
+              mountPath: /nsse-backend/certificates/mongo
           resources:
             requests:
               memory: "64Mi"
@@ -39,7 +45,7 @@ spec:
               cpu: "50m"
             livenessProbe:
               httpGet:
-                path: /order/health
+                path: /main/health
                 port: 4443
                 scheme: HTTPS
               successThreshold: 1
@@ -49,7 +55,7 @@ spec:
               periodSeconds: 60
             readinessProbe:
               httpGet:
-                path: /order/health
+                path: /main/health
                 port: 4443
                 scheme: HTTPS
               successThreshold: 1

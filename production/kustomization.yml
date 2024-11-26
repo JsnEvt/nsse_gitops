@@ -5,13 +5,19 @@ commonLabels:
   application: not-so-simple-ecommerce
 resources:
   - namespace.yml
-  - image-pull-secret.yml
   - config-map.yml
-  - secret.yml
+  - secrets/ecr-image-pull-credentials.yml
+  - secrets/kestrel-certificate.yml
+  - secrets/mongo-certificate.yml
   - order/deployment.yml
+  - main/deployment.yml
 images:
   - name: uri_do_dkr.ecr...amazonaws.com/nsse/production/order
   - newName: uri_do_dkr.ecr...amazonaws.com/nsse/production/order
+  - newTag: latest
+
+  - name: uri_do_dkr.ecr...amazonaws.com/nsse/production/main
+  - newName: uri_do_dkr.ecr...amazonaws.com/nsse/production/main
   - newTag: latest
 #Necessario abrir o tunel para executar o comando abaixo:
 
