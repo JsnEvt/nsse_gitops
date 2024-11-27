@@ -12,6 +12,13 @@ spec:
       labels:
         app: order
     spec:
+      #para definir um usuario NAO root, usamos o Security Context
+      #acessando o po: kubectl -n nsse exec -it "nome_do_pod" -- /bin/sh
+      #digitando o comando id, podemos ver o usuario dentro do container
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+      serviceAccount: nsse-sa-prod
       volumes:
         - name: kestrel
           secret:

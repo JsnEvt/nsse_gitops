@@ -12,6 +12,9 @@ spec:
       labels:
         app: main
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
       serviceAccount: nsse-sa-prod
       volumes:
         - name: kestrel
