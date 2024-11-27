@@ -12,6 +12,7 @@ spec:
       labels:
         app: main
     spec:
+      serviceAccount: nsse-sa-prod
       volumes:
         - name: kestrel
           secret:

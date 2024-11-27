@@ -9,6 +9,7 @@ resources:
   - secrets/ecr-image-pull-credentials.yml
   - secrets/kestrel-certificate.yml
   - secrets/mongo-certificate.yml
+  - service-account.yml
   - order/deployment.yml
   - main/deployment.yml
 images:
