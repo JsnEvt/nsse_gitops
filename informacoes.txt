@@ -8,3 +8,11 @@ E possivel gerar arquivo yaml a partir da linha de comando do prompt:
 Criando namespace:
 kubectl create namespace nsse --dry-run=client -o yaml > namespace.yml
 
+para enviar os outros microservicos para o ECR, usamos o comando abaixo:
+construindo o arquivo a partir do Dockerfile
+docker build -f endereco/do/pasta_do_microservico/Dockerfile -t endereco/do/ecr/aws:latest .
+enviando o arquivo para o ECR:
+docker push endreco/do/ecr/aws:latest
+
+
+

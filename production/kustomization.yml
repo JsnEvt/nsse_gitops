@@ -6,20 +6,40 @@ commonLabels:
 resources:
   - namespace.yml
   - config-map.yml
+  - service-account.yml
   - secrets/ecr-image-pull-credentials.yml
   - secrets/kestrel-certificate.yml
   - secrets/mongo-certificate.yml
-  - service-account.yml
-  - order/deployment.yml
+  - health-checker/deployment.yml
+  - identity-server/deployment.yml
+  - invoice-generator/deployment.yml
   - main/deployment.yml
+  - notificator/deployment.yml
+  - order/deployment.yml
 images:
   - name: uri_do_dkr.ecr...amazonaws.com/nsse/production/order
-  - newName: uri_do_dkr.ecr...amazonaws.com/nsse/production/order
-  - newTag: latest
+    newName: uri_do_dkr.ecr...amazonaws.com/nsse/production/order
+    newTag: latest
 
   - name: uri_do_dkr.ecr...amazonaws.com/nsse/production/main
-  - newName: uri_do_dkr.ecr...amazonaws.com/nsse/production/main
-  - newTag: latest
+    newName: uri_do_dkr.ecr...amazonaws.com/nsse/production/main
+    newTag: latest
+
+  - name: uri_do_dkr.ecr...amazonaws.com/nsse/production/identiryserver
+    newName: uri_do_dkr.ecr...amazonaws.com/nsse/production/identiryserver
+    newTag: latest
+
+  - name: uri_do_dkr.ecr...amazonaws.com/nsse/production/notificator
+    newName: uri_do_dkr.ecr...amazonaws.com/nsse/production/notificator
+    newTag: latest
+
+  - name: uri_do_dkr.ecr...amazonaws.com/nsse/production/health-checker
+    newName: uri_do_dkr.ecr...amazonaws.com/nsse/production/health-checker
+    newTag: latest
+
+  - name: uri_do_dkr.ecr...amazonaws.com/nsse/production/invoice-generator
+    newName: uri_do_dkr.ecr...amazonaws.com/nsse/production/invoice-generator
+    newTag: latest
 #Necessario abrir o tunel para executar o comando abaixo:
 
 #aws ssm start-session --target i-xxx --document-name AWS-StartPortForwardingSession --parameters 'portNumber=6443,localPortNumber=6443'
