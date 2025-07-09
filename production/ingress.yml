@@ -9,6 +9,7 @@ metadata:
     alb.ingress.kubernetes.io/certificate-arn: #certificado (ARN) obtido dentro do ACM na AWS
     alb.ingress.kubernetes.io/backend-protocol: HTTPS
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTPS
+    external-dns.alpha.kubernetes.io/hostname: semdominio.com
 spec:
   ingressClassName: alb #obrigatorio p/q ele saiba que e para provisionar um application load balancer no cloud provider
   rules:
