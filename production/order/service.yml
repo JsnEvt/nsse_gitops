@@ -6,6 +6,7 @@ metadata:
     service.kubernetes.io/topology-mode: Auto #Topology Aware Routing - para encaminhar
     # o trafego para os pods que estao na mesma zona de disponibilidade (de preferencia)
     # para aumentar a performance e reduzir a latencia.
+    alb.ingress.kubernetes.io/healthcheck-path: /order/health
 spec:
   type: NodePort
   selector:

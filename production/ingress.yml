@@ -1,0 +1,57 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    alb.ingress.kubernetes.io/load-balancer-name: nsse-ingress-prod
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: #certificado (ARN) obtido dentro do ACM na AWS
+    alb.ingress.kubernetes.io/backend-protocol: HTTPS
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTPS
+spec:
+  ingressClassName: alb #obrigatorio p/q ele saiba que e para provisionar um application load balancer no cloud provider
+  rules:
+    - http:
+        paths:
+          - path: /identity
+            pathType: Prefix
+            backend:
+              service:
+                name: nsse-identity-server-prod
+                port:
+                  number: 4443
+          - path: /invoice
+            pathType: Prefix
+            backend:
+              service:
+                name: nsse-invoice-generator-prod
+                port:
+                  number: 4443
+          - path: /main
+            pathType: Prefix
+            backend:
+              service:
+                name: nsse-main-prod
+                port:
+                  number: 4443
+          - path: /notificator
+            pathType: Prefix
+            backend:
+              service:
+                name: nsse-notificator-prod
+                port:
+                  number: 4443
+          - path: /order
+            pathType: Prefix
+            backend:
+              service:
+                name: nsse-order-prod
+                port:
+                  number: 4443
+#quando fizer o comando kubectl appy -k ., e possivel que ocorra alguns erros e e seja necessario
+#resetar todos os pods. podemos fazer isso com o comando:
+#kubectl delete po -n kube-system --all
+#pode haver a necessidade de deletar o ingress recem criado e, por nao estar exibindo as informacoes
+#do address, convem deleta-lo.
+#kubectl delete ingress -n nsse nsse-ingress-prod --grace-period 0 --force

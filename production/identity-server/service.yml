@@ -4,6 +4,7 @@ metadata:
   name: identity-server
   annotations:
     service.kubernetes.io/topology-mode: Auto
+    alb.ingress.kubernetes.io/healthcheck-path: /identity/health
 spec:
   type: NodePort
   selector:

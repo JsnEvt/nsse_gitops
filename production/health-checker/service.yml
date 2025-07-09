@@ -4,6 +4,7 @@ metadata:
   name: health-checker
   annotations:
     service.kubernetes.io/topology-mode: Auto
+    alb.ingress.kubernetes.io/healthcheck-path: /healthchecks/health
 spec:
   type: NodePort
   selector:

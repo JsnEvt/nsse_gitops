@@ -4,6 +4,7 @@ metadata:
   name: invoice-generator
   annotations:
     service.kubernetes.io/topology-mode: Auto
+    alb.ingress.kubernetes.io/healthcheck-path: /invoice/health
 spec:
   type: NodePort
   selector:
