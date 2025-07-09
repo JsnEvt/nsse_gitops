@@ -12,6 +12,13 @@ spec:
       labels:
         app: main
     spec:
+      topologySpreadConstraints: #obviamente, so funciona quando usado com diversas replicas
+        - maxSkew: 1 #diferenca entre as zonas
+          topologyKey: topology.kubernetes.io/zone #restricao por zona
+          whenUnsatisfiable: DoNotSchedule #quando a condicao nao for satisfeita, nao faca o agendamento
+          labelSelector:
+            matchLabels:
+              app: main
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
@@ -24,7 +31,7 @@ spec:
           secret:
             secretName: mongo-certificate
       ImagePullSecrets:
-        - name: ecr
+        - name: ecr-image-pull-credentials
       containers:
         - name: main
           image: uri_do_repositorio_no_ECR_AWS
