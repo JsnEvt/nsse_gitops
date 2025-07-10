@@ -20,8 +20,14 @@ resources:
   - identity-server/service.yml
   - invoice-generator/service.yml
   - main/service.yml
+  - main/hpa.yml
   - notificator/service.yml
   - order/service.yml
+  - identity-server/hpa.yml
+  - invoice-generator/hpa.yml
+  - main/hpa.yml
+  - notificator/hpa.yml
+  - order/hpa.yml
   - ingress.yml
 images:
   - name: uri_do_dkr.ecr...amazonaws.com/nsse/production/order
