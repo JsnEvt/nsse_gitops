@@ -1,74 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: invoice-generator
+  name: {{ .Release.Name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.invoiceGeneratorDeployment.replicaCount }}
   selector:
     matchLabels:
-      app: invoice-generator
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: invoice-generator
+        app: {{ .Release.Name }}
     spec:
-    topologySpreadConstraints:
-      - maxSkew: 1
-        topologyKey: topology.kubernetes.io/zone
-        whenUnsatisfiable: DoNotSchedule
-        labelSelector:
-          matchLabels:
-            app: invoice-generator
-
-        #para definir um usuario NAO root, usamos o Security Context
-        #acessando o po: kubectl -n nsse exec -it "nome_do_pod" -- /bin/sh
-        #digitando o comando id, podemos ver o usuario dentro do container
-        securityContext:
-          runAsUser: 1000
-          runAsGroup: 1000
-        serviceAccount: nsse-sa-prod
-        volumes:
-          - name: kestrel
-            secret:
-              secretName: kestrel-certificate
-        ImagePullSecrets:
-          - name: ecr-image-pull-credentials
-        containers:
-          - name: invoice-generator
-            image: uri_do_repositorio_no_ECR_AWS
-            ports:
-              - containerPort: 4443
-            envFrom:
-              - configMapRef:
-                  name: config-map
-            volumeMounts:
-              - name: kestrel
-                readOnly: true
-                mountPath: /nsse-backend/certificates/kestrel
-            resources:
-              requests:
-                memory: "128Mi"
-                cpu: "100m"
-              limits:
-                memory: "256Mi"
-                cpu: "200m"
-              livenessProbe:
-                httpGet:
-                  path: /invoice/health
-                  port: 4443
-                  scheme: HTTPS
-                successThreshold: 1
-                failureThreshold: 3
-                initialDelaySeconds: 120
-                timeoutSeconds: 15
-                periodSeconds: 60
-              readinessProbe:
-                httpGet:
-                  path: /invoice/health
-                  port: 4443
-                  scheme: HTTPS
-                successThreshold: 1
-                failureThreshold: 3
-                initialDelaySeconds: 3
-                timeoutSeconds: 15
-                periodSeconds: 3
+      topologySpreadConstraints:
+      {{- range .Values.invoiceGeneratorDeployment.topologySpreadConstraints }}
+        - maxSkew: {{ .maxSkew }}
+          topologyKey: {{ .topologyKey }}
+          whenUnsatisfiable: {{ .whenUnsatisfiable }}
+          labelSelector:
+            matchLabels:
+              app: {{ $.Release.Name }}
+      {{- end}}
+      #para definir um usuario NAO root, usamos o Security Context
+      #acessando o po: kubectl -n nsse exec -it "nome_do_pod" -- /bin/sh
+      #digitando o comando id, podemos ver o usuario dentro do container
+      securityContext:
+        {{- toYaml .Values.invoiceGeneratorDeployment.securityContext | nindent 8 }}
+      serviceAccount: {{ .Values.invoiceGeneratorDeployment.serviceAccount }}
+      volumes:
+        {{- toYaml .Values.invoiceGeneratorDeployment.volumes | nindent 8}}
+      ImagePullSecrets:
+        - name: {{ .Values.invoiceGeneratorDeployment.imagePullSecrets }}
+      containers:
+      - name: {{ .Release.Name }}
+        image: {{ .Values.invoiceGeneratorDeployment.image }}
+        ports:
+        - containerPort: {{ .Values.invoiceGeneratorDeployment.containerPort }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.invoiceGeneratorDeployment.configMap }}
+        volumeMounts:
+          {{- toYaml .Values.invoiceGeneratorDeployment.volumeMounts | nindent 10 }}
+        resources:
+          {{- toYaml .Values.invoiceGeneratorDeployment.resources | nindent 10 }}
+        livenessProbe:
+          {{- toYaml .Values.invoiceGeneratorDeployment.livenessProbe | nindent 10 }}
+        readinessProbe:
+          {{- toYaml .Values.invoiceGeneratorDeployment.readinessProbe | nindent 10 }}

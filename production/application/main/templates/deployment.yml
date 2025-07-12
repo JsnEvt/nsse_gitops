@@ -1,76 +1,49 @@
-1apiVersion: apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: main
+  name: {{ .Release.Name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.mainDeployment.replicaCount }}
   selector:
     matchLabels:
-      app: main
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: main
+        app: {{ .Release.Name }}
     spec:
-      topologySpreadConstraints: #obviamente, so funciona quando usado com diversas replicas
-        - maxSkew: 1 #diferenca entre as zonas
-          topologyKey: topology.kubernetes.io/zone #restricao por zona
-          whenUnsatisfiable: DoNotSchedule #quando a condicao nao for satisfeita, nao faca o agendamento
+      topologySpreadConstraints:
+      {{- range .Values.mainDeployment.topologySpreadConstraints }}
+        - maxSkew: {{ .maxSkew }}
+          topologyKey: {{ .topologyKey }}
+          whenUnsatisfiable: {{ .whenUnsatisfiable }}
           labelSelector:
             matchLabels:
-              app: main
+              app: {{ $.Release.Name }}
+      {{- end}}
+      #para definir um usuario NAO root, usamos o Security Context
+      #acessando o po: kubectl -n nsse exec -it "nome_do_pod" -- /bin/sh
+      #digitando o comando id, podemos ver o usuario dentro do container
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-      serviceAccount: nsse-sa-prod
+        {{- toYaml .Values.mainDeployment.securityContext | nindent 8 }}
+      serviceAccount: {{ .Values.mainDeployment.serviceAccount }}
       volumes:
-        - name: kestrel
-          secret:
-            secretName: kestrel-certificate
-        - name: mongo
-          secret:
-            secretName: mongo-certificate
+        {{- toYaml .Values.mainDeployment.volumes | nindent 8}}
       ImagePullSecrets:
-        - name: ecr-image-pull-credentials
+        - name: {{ .Values.mainDeployment.imagePullSecrets }}
       containers:
-        - name: main
-          image: uri_do_repositorio_no_ECR_AWS
-          ports:
-            - containerPort: 4443
-          envFrom:
-            - configMapRef:
-                name: config-map
-          volumeMounts:
-            - name: kestrel
-              readOnly: true
-              mountPath: /nsse-backend/certificates/kestrel
-            - name: mongo
-              readOnly: true
-              mountPath: /nsse-backend/certificates/mongo
-          resources:
-            requests:
-              memory: "64Mi"
-              cpu: "50m"
-            limits:
-              memory: "64Mi"
-              cpu: "50m"
-            livenessProbe:
-              httpGet:
-                path: /main/health
-                port: 4443
-                scheme: HTTPS
-              successThreshold: 1
-              failureThreshold: 3
-              initialDelaySeconds: 120
-              timeoutSeconds: 15
-              periodSeconds: 60
-            readinessProbe:
-              httpGet:
-                path: /main/health
-                port: 4443
-                scheme: HTTPS
-              successThreshold: 1
-              failureThreshold: 3
-              initialDelaySeconds: 3
-              timeoutSeconds: 15
-              periodSeconds: 3
+      - name: {{ .Release.Name }}
+        image: {{ .Values.mainDeployment.image }}
+        ports:
+        - containerPort: {{ .Values.mainDeployment.containerPort }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.mainDeployment.configMap }}
+        volumeMounts:
+          {{- toYaml .Values.mainDeployment.volumeMounts | nindent 10 }}
+        resources:
+          {{- toYaml .Values.mainDeployment.resources | nindent 10 }}
+        livenessProbe:
+          {{- toYaml .Values.mainDeployment.livenessProbe | nindent 10 }}
+        readinessProbe:
+          {{- toYaml .Values.mainDeployment.readinessProbe | nindent 10 }}

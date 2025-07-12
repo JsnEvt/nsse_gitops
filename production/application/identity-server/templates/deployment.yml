@@ -1,74 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: identity-server
+  name: {{ .Release.Name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.identityServerDeployment.replicaCount }}
   selector:
     matchLabels:
-      app: identity-server
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: identity-server
+        app: {{ .Release.Name }}
     spec:
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: DoNotSchedule
+      {{- range .Values.identityServerDeployment.topologySpreadConstraints }}
+        - maxSkew: {{ .maxSkew }}
+          topologyKey: {{ .topologyKey }}
+          whenUnsatisfiable: {{ .whenUnsatisfiable }}
           labelSelector:
             matchLabels:
-              app: identity-server
-
+              app: {{ $.Release.Name }}
+      {{- end}}
       #para definir um usuario NAO root, usamos o Security Context
       #acessando o po: kubectl -n nsse exec -it "nome_do_pod" -- /bin/sh
       #digitando o comando id, podemos ver o usuario dentro do container
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-      serviceAccount: nsse-sa-prod
+        {{- toYaml .Values.identityServerDeployment.securityContext | nindent 8 }}
+      serviceAccount: {{ .Values.identityServerDeployment.serviceAccount }}
       volumes:
-        - name: kestrel
-          secret:
-            secretName: kestrel-certificate
+        {{- toYaml .Values.identityServerDeployment.volumes | nindent 8}}
       ImagePullSecrets:
-        - name: ecr-image-pull-credentials
+        - name: {{ .Values.identityServerDeployment.imagePullSecrets }}
       containers:
-        - name: identity-server
-          image: uri_do_repositorio_no_ECR_AWS
-          ports:
-            - containerPort: 4443
-          envFrom:
-            - configMapRef:
-                name: config-map
-          volumeMounts:
-            - name: kestrel
-              readOnly: true
-              mountPath: /nsse-backend/certificates/kestrel
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "100m"
-            limits:
-              memory: "256Mi"
-              cpu: "200m"
-            livenessProbe:
-              httpGet:
-                path: /identity/health
-                port: 4443
-                scheme: HTTPS
-              successThreshold: 1
-              failureThreshold: 3
-              initialDelaySeconds: 120
-              timeoutSeconds: 15
-              periodSeconds: 60
-            readinessProbe:
-              httpGet:
-                path: /identity/health
-                port: 4443
-                scheme: HTTPS
-              successThreshold: 1
-              failureThreshold: 3
-              initialDelaySeconds: 3
-              timeoutSeconds: 15
-              periodSeconds: 3
+      - name: {{ .Release.Name }}
+        image: {{ .Values.identityServerDeployment.image }}
+        ports:
+        - containerPort: {{ .Values.identityServerDeployment.containerPort }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.identityServerDeployment.configMap }}
+        volumeMounts:
+          {{- toYaml .Values.identityServerDeployment.volumeMounts | nindent 10 }}
+        resources:
+          {{- toYaml .Values.identityServerDeployment.resources | nindent 10 }}
+        livenessProbe:
+          {{- toYaml .Values.identityServerDeployment.livenessProbe | nindent 10 }}
+        readinessProbe:
+          {{- toYaml .Values.identityServerDeployment.readinessProbe | nindent 10 }}

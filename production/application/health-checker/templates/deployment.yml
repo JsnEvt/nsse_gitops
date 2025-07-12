@@ -1,73 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: health-checker
+  name: {{ .Release.Name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.healthCheckerDeployment.replicaCount }}
   selector:
     matchLabels:
-      app: health-checker
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: health-checker
+        app: {{ .Release.Name }}
     spec:
       topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: topology.kubernetes.io/zone
-          whenUnsatisfiable: DoNotSchedule
+      {{- range .Values.healthCheckerDeployment.topologySpreadConstraints }}
+        - maxSkew: {{ .maxSkew }}
+          topologyKey: {{ .topologyKey }}
+          whenUnsatisfiable: {{ .whenUnsatisfiable }}
           labelSelector:
             matchLabels:
-              app: health-checker
+              app: {{ $.Release.Name }}
+      {{- end}}
       #para definir um usuario NAO root, usamos o Security Context
       #acessando o po: kubectl -n nsse exec -it "nome_do_pod" -- /bin/sh
       #digitando o comando id, podemos ver o usuario dentro do container
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-      serviceAccount: nsse-sa-prod
+        {{- toYaml .Values.healthCheckerDeployment.securityContext | nindent 8 }}
+      serviceAccount: {{ .Values.healthCheckerDeployment.serviceAccount }}
       volumes:
-        - name: kestrel
-          secret:
-            secretName: kestrel-certificate
+        {{- toYaml .Values.healthCheckerDeployment.volumes | nindent 8}}
       ImagePullSecrets:
-        - name: ecr-image-pull-credentials
+        - name: {{ .Values.healthCheckerDeployment.imagePullSecrets }}
       containers:
-        - name: health-checker
-          image: uri_do_repositorio_no_ECR_AWS
-          ports:
-            - containerPort: 4443
-          envFrom:
-            - configMapRef:
-                name: config-map
-          volumeMounts:
-            - name: kestrel
-              readOnly: true
-              mountPath: /nsse-backend/certificates/kestrel
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "100m"
-            limits:
-              memory: "256Mi"
-              cpu: "200m"
-            livenessProbe:
-              httpGet:
-                path: /healthchecks/health
-                port: 4443
-                scheme: HTTPS
-              successThreshold: 1
-              failureThreshold: 3
-              initialDelaySeconds: 120
-              timeoutSeconds: 15
-              periodSeconds: 60
-            readinessProbe:
-              httpGet:
-                path: /healthchecks/health
-                port: 4443
-                scheme: HTTPS
-              successThreshold: 1
-              failureThreshold: 3
-              initialDelaySeconds: 3
-              timeoutSeconds: 15
-              periodSeconds: 3
+      - name: {{ .Release.Name }}
+        image: {{ .Values.healthCheckerDeployment.image }}
+        ports:
+        - containerPort: {{ .Values.healthCheckerDeployment.containerPort }}
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.healthCheckerDeployment.configMap }}
+        volumeMounts:
+          {{- toYaml .Values.healthCheckerDeployment.volumeMounts | nindent 10 }}
+        resources:
+          {{- toYaml .Values.healthCheckerDeployment.resources | nindent 10 }}
+        livenessProbe:
+          {{- toYaml .Values.healthCheckerDeployment.livenessProbe | nindent 10 }}
+        readinessProbe:
+          {{- toYaml .Values.healthCheckerDeployment.readinessProbe | nindent 10 }}
