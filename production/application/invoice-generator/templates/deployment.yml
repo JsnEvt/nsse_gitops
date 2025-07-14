@@ -29,7 +29,7 @@ spec:
       serviceAccount: {{ .Values.invoiceGeneratorDeployment.serviceAccount }}
       volumes:
         {{- toYaml .Values.invoiceGeneratorDeployment.volumes | nindent 8}}
-      ImagePullSecrets:
+      imagePullSecrets:
         - name: {{ .Values.invoiceGeneratorDeployment.imagePullSecrets }}
       containers:
       - name: {{ .Release.Name }}

@@ -29,7 +29,7 @@ spec:
       serviceAccount: {{ .Values.healthCheckerDeployment.serviceAccount }}
       volumes:
         {{- toYaml .Values.healthCheckerDeployment.volumes | nindent 8}}
-      ImagePullSecrets:
+      imagePullSecrets:
         - name: {{ .Values.healthCheckerDeployment.imagePullSecrets }}
       containers:
       - name: {{ .Release.Name }}

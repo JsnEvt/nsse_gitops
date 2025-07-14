@@ -29,7 +29,7 @@ spec:
       serviceAccount: {{ .Values.notificatorDeployment.serviceAccount }}
       volumes:
         {{- toYaml .Values.notificatorDeployment.volumes | nindent 8}}
-      ImagePullSecrets:
+      imagePullSecrets:
         - name: {{ .Values.notificatorDeployment.imagePullSecrets }}
       containers:
       - name: {{ .Release.Name }}

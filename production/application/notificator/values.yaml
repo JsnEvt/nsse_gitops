@@ -5,11 +5,11 @@ notificatorDeployment:
   configMap: nsse-config-map-prod
   replicaCount: 1
   serviceAccount: nsse-sa-prod
-  imagePullSecrets: nsse-ecr-image-pull-secrets-prod
+  imagePullSecrets: nsse-ecr-image-pull-credentials-prod
   autoScaling:
     minReplicas: 1
     maxReplicas: 3
-    averageCpuUtilization: 50
+    averageUtilization: 50
     scaleDown:
       stabilizationWindowSeconds: 15
       policies:
@@ -19,7 +19,7 @@ notificatorDeployment:
         - type: Pods
           value: 2
           periodSeconds: 15
-          selectPolicy: Min
+      selectPolicy: Min
     scaleUp:
       stabilizationWindowSeconds: 0
       policies:
@@ -29,7 +29,7 @@ notificatorDeployment:
         - type: Pods
           value: 2
           periodSeconds: 15
-          selectPolicy: Max
+      selectPolicy: Max
   topologySpreadConstraints:
     - maxSkew: 1
       topologyKey: topology.kubernetes.io/zone

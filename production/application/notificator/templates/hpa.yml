@@ -15,7 +15,7 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageCpuUtilization: {{.Values.notificatorDeployment.autoScaling.averageCpuUtilization}}
+          averageUtilization: {{.Values.notificatorDeployment.autoScaling.averageUtilization}}
   behavior:
     scaleDown:
       {{- toYaml .Values.notificatorDeployment.autoScaling.scaleDown | nindent 6 }}

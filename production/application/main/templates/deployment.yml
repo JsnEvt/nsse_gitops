@@ -29,7 +29,7 @@ spec:
       serviceAccount: {{ .Values.mainDeployment.serviceAccount }}
       volumes:
         {{- toYaml .Values.mainDeployment.volumes | nindent 8}}
-      ImagePullSecrets:
+      imagePullSecrets:
         - name: {{ .Values.mainDeployment.imagePullSecrets }}
       containers:
       - name: {{ .Release.Name }}

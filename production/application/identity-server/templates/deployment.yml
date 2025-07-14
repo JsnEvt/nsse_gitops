@@ -29,7 +29,7 @@ spec:
       serviceAccount: {{ .Values.identityServerDeployment.serviceAccount }}
       volumes:
         {{- toYaml .Values.identityServerDeployment.volumes | nindent 8}}
-      ImagePullSecrets:
+      imagePullSecrets:
         - name: {{ .Values.identityServerDeployment.imagePullSecrets }}
       containers:
       - name: {{ .Release.Name }}
