@@ -1,6 +1,7 @@
 invoiceGeneratorDeployment:
   image: uri_do_repositorio_no_ECR_AWS
   containerPort: 4443
+  nodePort: 30003
   configMap: nsse-config-map-prod
   replicaCount: 1
   serviceAccount: nsse-sa-prod

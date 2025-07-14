@@ -1,6 +1,7 @@
 mainDeployment:
   image: uri_do_repositorio_no_ECR_AWS
   containerPort: 4443
+  nodePort: 30002
   configMap: nsse-config-map-prod
   replicaCount: 1
   serviceAccount: nsse-sa-prod
@@ -16,10 +17,15 @@ mainDeployment:
     - name: kestrel
       secret:
         secretName: kestrel-certificate
+    - name: mongo
+      secretName: mongo-certificate
   volumeMounts:
     - name: kestrel
       readOnly: true
       mountPath: /nsse-backend/certificates/kestrel
+    - name: mongo
+      readOnly: true
+      mountPath: /nsse-backend/certificates/mongo
   resources:
     requests:
       memory: "64Mi"
