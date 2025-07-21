@@ -56,3 +56,9 @@ spec:
 #pode haver a necessidade de deletar o ingress recem criado e, por nao estar exibindo as informacoes
 #do address, convem deleta-lo.
 #kubectl delete ingress -n nsse nsse-ingress-prod --grace-period 0 --force
+#hack para delecao - edit o pod ingress
+#export KUBECONFIG=/etc/kubernetes/admin.conf
+#export AWS_PROFILE=conta_administrator
+#kubectl edit ingress -n nsse -nsse-ingress-prod(exemplo)
+#na linha finalizers - apaga tudo e coloca um []
+

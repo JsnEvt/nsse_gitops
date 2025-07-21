@@ -83,3 +83,8 @@ images:
 
 #kubectl get deploy -n nsse
 #kubectl get deploy,po -n nsse
+
+#ncomando para construir tudo usando o --enable-helm
+#kustomize build --enable-helm | kubectl apply -f -
+#kubectl get all -n nsse
+#kubectl get all -n nsse -w (watch - para assistir a criacao)
