@@ -4,12 +4,16 @@ metadata:
   name: ingress
   annotations:
     alb.ingress.kubernetes.io/load-balancer-name: nsse-ingress-prod
-    alb.ingress.kubernetes.io/scheme: internet-facing
+    #quando trabalhamos com vpc origin usando um load balancer atras de um cloudfront, podemos mudar o schema para internal.
+    #o load balancer nao precisa ficar mais hospedado em subnets publicas. ele sera transferido para a subnet privada.
+    alb.ingress.kubernetes.io/scheme: internal
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
     alb.ingress.kubernetes.io/certificate-arn: #certificado (ARN) obtido dentro do ACM na AWS
     alb.ingress.kubernetes.io/backend-protocol: HTTPS
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTPS
-    external-dns.alpha.kubernetes.io/hostname: semdominio.com
+    #e o dominio sera atribuido ao cloudfront
+    #foi necessario definir um nomo hostname para referir-se ao backend
+    external-dns.alpha.kubernetes.io/hostname: backend.semdominio.com
 spec:
   ingressClassName: alb #obrigatorio p/q ele saiba que e para provisionar um application load balancer no cloud provider
   rules:
