@@ -14,6 +14,12 @@ metadata:
     #e o dominio sera atribuido ao cloudfront
     #foi necessario definir um nomo hostname para referir-se ao backend
     external-dns.alpha.kubernetes.io/hostname: backend.semdominio.com
+    #quando o ingress cria o applicaation load balancer, ele automaticamente cria dois security groups padroes
+    #por nao estarmos informando a annotation de security group e isso deixa liberado todo trafego de entrada e saida
+    #da internet. Nesse caso queremos liberar apenas o trafego que vem do cloudfront. Eis o motivo da adicao abaixo:
+    alb.ingress.kubernetes.io/security-groups: nsse-production-alb-security-group,nsse-production-worker-security-group
+    #nsse-production-worker-security-group por causa da regra recursiva na criacao do sg de worker
+
 spec:
   ingressClassName: alb #obrigatorio p/q ele saiba que e para provisionar um application load balancer no cloud provider
   rules:
